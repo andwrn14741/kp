@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Добавить автомобиль</h2>
+<form method="post" enctype="multipart/form-data" class="car-form">
+  <div class="form-columns">
+    <div class="form-group">
+      <label>Марка</label>
+      <input type="text" name="brand" required>
+      <label>Модель</label>
+      <input type="text" name="model" required>
+      <label>Поколение</label>
+      <input type="text" name="generation">
+      <label>Кузова</label>
+      <input type="text" name="body">
+      <label>Двигателя</label>
+      <input type="text" name="engines">
+      <label>Привод</label>
+      <input type="text" name="drive">
+      <label>Класс</label>
+      <input type="text" name="car_class">
+      <label>Годы</label>
+      <input type="text" name="years">
+      <label>Страна</label>
+      <input type="text" name="country">
+      <label>«Больные» места</label>
+      <textarea name="weak_points" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Средняя цена (мин)</label>
+      <input type="text" name="avg_price_min">
+      <label>Средняя цена (макс)</label>
+      <input type="text" name="avg_price_max">
+      <label>Фото</label>
+      <input type="file" name="photo" accept="image/*">
+    </div>
+  </div>
+  <button type="submit">Сохранить</button>
+</form>
+{% endblock %}

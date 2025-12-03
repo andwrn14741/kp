@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+ <form method="get" class="filters">
+
+  <select name="sort">
+    <option value="date" {% if sort =='date' %}selected{% endif %}>По дате</option>
+    <option value="name" {% if sort =='name' %}selected{% endif %}>По названию</option>
+    <option value="price_asc" {% if sort =='price_asc' %}selected{% endif %}>Цена ↑</option>
+    <option value="price_desc" {% if sort =='price_desc' %}selected{% endif %}>Цена ↓</option>
+  </select>
+  <button type="submit" class="btn btn-primary btn-wide" title="Применить фильтры">✔</button>
+</form>
+
+</section>
+
+<section>
+  {% if items|length == 0 %}
+    <p>Ничего не найдено.</p>
+  {% else %}
+    <ul class="cards">
+  {% for i in items %}
+  <li class="card">
+    <div class="card-header">
+      <strong>{{ i.brand }} {{ i.model }}</strong>
+      {% if i.generation %}<span> • {{ i.generation }}</span>{% endif %}
+    </div>
+
+    {% if i.photo_filename %}
+      <a href="{{ url_for('view_car', car_id=i.id) }}">
+        <img src="{{ url_for('static', filename='uploads/' ~ i.photo_filename) }}" class="card-image">
+      </a>
+    {% endif %}
+
+    <div class="card-body">
+      {% if i.avg_price_min and i.avg_price_max %}
+        <div><b>Цена:</b> {{ i.avg_price_min }}–{{ i.avg_price_max }} $</div>
+      {% endif %}
+      {% if i.years %}<div><b>Годы:</b> {{ i.years }}</div>{% endif %}
+      {% if i.car_class %}<div><b>Класс:</b> {{ i.car_class }}</div>{% endif %}
+      {% if i.country %}<div><b>Страна:</b> {{ i.country }}</div>{% endif %}
+      {% if i.weak_points %}<div><b>«Больные» места:</b> {{ i.weak_points }}</div>{% endif %}
+    </div>
+
+    <div class="card-footer">
+      <a href="{{ url_for('edit_car', car_id=i.id) }}" class="card-btn left" title="Редактировать">✏️</a>
+      <form method="post" action="{{ url_for('delete_car', car_id=i.id) }}">
+        <button type="submit" class="card-btn right danger" title="Удалить">🗑️</button>
+      </form>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+
+  {% endif %}
+</section>
+{% endblock %}

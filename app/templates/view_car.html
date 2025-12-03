@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="car-view">
+  <div class="car-info">
+    <h2 class="car-title">
+      {{ item.brand }} {{ item.model }}
+      {% if item.generation %}
+        <span class="car-generation">• {{ item.generation }}</span>
+      {% endif %}
+    </h2>
+    <div class="car-meta">
+      {% if item.avg_price_min and item.avg_price_max %}
+        <div><b>Цена:</b> {{ item.avg_price_min }}–{{ item.avg_price_max }} $</div>
+      {% endif %}
+      {% if item.years %}<div><b>Годы:</b> {{ item.years }}</div>{% endif %}
+      {% if item.car_class %}<div><b>Класс:</b> {{ item.car_class }}</div>{% endif %}
+      {% if item.country %}<div><b>Страна:</b> {{ item.country }}</div>{% endif %}
+    </div>
+    <div class="car-specs">
+      {% if item.body %}<div><b>Кузова:</b> {{ item.body }}</div>{% endif %}
+      {% if item.engines %}<div><b>Двигателя:</b> {{ item.engines }}</div>{% endif %}
+      {% if item.drive %}<div><b>Привод:</b> {{ item.drive }}</div>{% endif %}
+      {% if item.weak_points %}<div><b>«Больные» места:</b> {{ item.weak_points }}</div>{% endif %}
+    </div>
+  </div>
+  {% if item.photo_filename %}
+    <div class="car-photo">
+      <img src="{{ url_for('static', filename='uploads/' ~ item.photo_filename) }}"
+           alt="Фото автомобиля"
+           onclick="openImageModal(this.src)">
+    </div>
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+  <img id="modalImage" class="modal-content">
+</div>
+  {% endif %}
+  <div class="card-footer">
+    <a href="{{ url_for('edit_car', car_id=item.id) }}" class="card-btn left" title="Редактировать">✏️</a>
+    <form method="post" action="{{ url_for('delete_car', car_id=item.id) }}">
+      <button type="submit" class="card-btn right danger" title="Удалить">🗑️</button>
+    </form>
+  </div>
+</article>
+{% endblock %}
+<script>
+function openImageModal(src) {
+  const modal = document.getElementById('imageModal');
+  const img = document.getElementById('modalImage');
+  img.src = src;
+  modal.classList.add('show');
+}
+function closeImageModal() {
+  document.getElementById('imageModal').classList.remove('show');
+}
+</script>

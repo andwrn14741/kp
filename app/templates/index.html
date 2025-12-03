@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="home-hero">
+  <div class="home-content">
+    <h1>Каталог автомобилей</h1>
+    <p>Добро пожаловать! Здесь вы можете просматривать, добавлять и редактировать автомобили. Для доступа к базе моделей воспользуйтесь кнопкой ниже.</p>
+    <a href="{{ url_for('catalog') }}" class="btn btn-primary btn-large">Открыть каталог</a>
+  </div>
+</section>
+{% endblock %}

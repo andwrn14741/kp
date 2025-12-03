@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Редактировать автомобиль</h2>
+<form method="post" enctype="multipart/form-data" class="car-form">
+  <div class="form-columns">
+    <div class="form-group">
+      <label>Марка</label>
+      <input type="text" name="brand" value="{{ item.brand }}" required>
+      <label>Модель</label>
+      <input type="text" name="model" value="{{ item.model }}" required>
+      <label>Поколение</label>
+      <input type="text" name="generation" value="{{ item.generation }}">
+      <label>Кузова</label>
+      <input type="text" name="body" value="{{ item.body }}">
+      <label>Двигателя</label>
+      <input type="text" name="engines" value="{{ item.engines }}">
+      <label>Привод</label>
+      <input type="text" name="drive" value="{{ item.drive }}">
+      <label>Класс</label>
+      <input type="text" name="car_class" value="{{ item.car_class }}">
+      <label>Годы</label>
+      <input type="text" name="years" value="{{ item.years }}">
+      <label>Страна</label>
+      <input type="text" name="country" value="{{ item.country }}">
+      <label>«Больные» места</label>
+      <textarea name="weak_points" rows="3">{{ item.weak_points }}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Средняя цена (мин)</label>
+      <input type="text" name="avg_price_min" value="{{ item.avg_price_min }}">
+      <label>Средняя цена (макс)</label>
+      <input type="text" name="avg_price_max" value="{{ item.avg_price_max }}">
+      <label>Фото</label>
+      <input type="file" name="photo" accept="image/*">
+      {% if item.photo_filename %}
+        <img src="{{ url_for('static', filename='uploads/' ~ item.photo_filename) }}" alt="Фото" class="form-preview">
+      {% endif %}
+    </div>
+  </div>
+  <button type="submit">Сохранить изменения</button>
+</form>
+{% endblock %}

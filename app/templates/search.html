@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Поиск автомобилей</h2>
+<form method="get" class="filters">
+    <input type="text" name="q" value="{{ query or '' }}" placeholder="Марка, модель, кузов...">
+    <button type="submit" class="btn btn-primary">Искать</button>
+</form>
+<section>
+    {% if query %}
+        {% if results_db %}
+            <h3>🚗 Результаты из базы:</h3>
+            <ul class="cards">
+                {% for i in results_db %}
+                    <li class="card">
+                        <div class="card-header">
+                            <strong>{{ i.brand }} {{ i.model }}</strong>
+                            {% if i.generation %}
+                                <span> • {{ i.generation }}</span>
+                            {% endif %}
+                        </div>
+                        {% if i.photo_filename %}
+                            <a href="{{ url_for('view_car', car_id=i.id) }}">
+                                <img src="{{ url_for('static', filename='uploads/' ~ i.photo_filename) }}" class="card-image">
+                            </a>
+                        {% endif %}
+                        <div class="card-body">
+                            {% if i.avg_price_min and i.avg_price_max %}
+                                <div><b>Цена:</b> {{ i.avg_price_min }}–{{ i.avg_price_max }} $</div>
+                            {% endif %}
+                            {% if i.years %}
+                                <div><b>Годы:</b> {{ i.years }}</div>
+                            {% endif %}
+                            {% if i.car_class %}
+                                <div><b>Класс:</b> {{ i.car_class }}</div>
+                            {% endif %}
+                            {% if i.country %}
+                                <div><b>Страна:</b> {{ i.country }}</div>
+                            {% endif %}
+                            {% if i.weak_points %}
+                                <div><b>«Больные» места:</b> {{ i.weak_points }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-footer">
+                            <a href="{{ url_for('edit_car', car_id=i.id) }}" class="card-btn left" title="Редактировать">✏️</a>
+                            <form method="post" action="{{ url_for('delete_car', car_id=i.id) }}">
+                                <button type="submit" class="card-btn right danger" title="Удалить">🗑️</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>🚫 В базе знаний ничего не найдено.</p>
+        {% endif %}
+        {% if results_links %}
+            <h3>🔗 Полезные ссылки:</h3>
+            <ul class="link-list">
+                {% for g in results_links %}
+                    <li><a href="{{ g.url }}" target="_blank">{{ g.title }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if results_images %}
+            <h3>🖼️ Изображения:</h3>
+            <div class="image-grid">
+                {% for img in results_images %}
+                    <img src="{{ img.url }}" alt="{{ img.title }}" class="search-image" onclick="openImageModal(this.src)">
+                {% endfor %}
+            </div>
+            <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+                <img id="modalImage" class="modal-content">
+            </div>
+        {% endif %}
+        {% if results_videos %}
+            <h3>🎥 Видео:</h3>
+            <div class="video-grid">
+                {% for vid in results_videos %}
+                    {% set video_id = vid.url.split('v=')[-1].split('&')[0] %}
+                    <iframe src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0" allowfullscreen></iframe>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endif %}
+</section>
+{% endblock %}

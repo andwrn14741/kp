@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Каталог автомобилей{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <style>
+    #network-status { margin-left: 1em; font-weight: bold; transition: color 0.3s ease; }
+    .status-online { color: green; }
+    .status-offline { color: red; }
+    .ping-button {
+      margin-left: 1em;
+      padding: 4px 10px;
+      border: none;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #4caf50, #81c784);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .ping-button:hover { background: linear-gradient(90deg, #388e3c, #66bb6a); }
+  </style>
+</head>
+<script>
+function openImageModal(src) {
+  const modal = document.getElementById('imageModal');
+  const img = document.getElementById('modalImage');
+  img.src = src;
+  modal.classList.add('show');
+}
+function closeImageModal() {
+  document.getElementById('imageModal').classList.remove('show');
+}
+</script>
+
+<body>
+  <header>
+    <h1>Каталог автомобилей</h1>
+    <nav>
+      <a href="{{ url_for('index') }}">Главная</a>
+      <a href="{{ url_for('catalog') }}">Каталог</a>
+      <a href="{{ url_for('search') }}">Поиск</a>
+      <a href="{{ url_for('add_car') }}">Добавить</a>
+      <button id="theme-toggle">🌙</button>
+      <button class="ping-button" onclick="checkNetwork()">🔄 Проверить сеть</button>
+      <span id="network-status" class="status-online" title="Вы онлайн">🌐</span>
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash">
+          {% for message in messages %}
+            <li class="flash-item">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    Flask + SQLite • Каталог автомобилей
+  </footer>
+  <script>
+    const html = document.documentElement;
+    const toggleBtn = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      html.setAttribute('data-theme', savedTheme);
+      toggleBtn.textContent = savedTheme === 'light' ? '🌙' : '☀️';
+    }
+    toggleBtn.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+      toggleBtn.textContent = next === 'light' ? '🌙' : '☀️';
+      localStorage.setItem('theme', next);
+    });
+
+    function checkNetwork() {
+      const status = document.getElementById("network-status");
+      status.textContent = "⏳ Проверка...";
+      status.className = "";
+      fetch("/ping")
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === "online") {
+            status.textContent = "🌐 Вы онлайн";
+            status.className = "status-online";
+            status.title = "Вы онлайн";
+          } else {
+            status.textContent = "🚫 Вы оффлайн";
+            status.className = "status-offline";
+            status.title = "Нет соединения";
+          }
+        })
+        .catch(() => {
+          status.textContent = "🚫 Ошибка сети";
+          status.className = "status-offline";
+          status.title = "Ошибка при проверке";
+        });
+    }
+    window.addEventListener("load", checkNetwork);
+    window.addEventListener("online", checkNetwork);
+    window.addEventListener("offline", checkNetwork);
+  </script>
+</body>
+</html>
